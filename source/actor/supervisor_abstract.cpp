@@ -10,7 +10,8 @@
 #include <actor-zeta/base/supervisor_abstract.hpp>
 #include <actor-zeta/link.hpp>
 
-namespace actor_zeta { namespace base {
+namespace actor_zeta {
+namespace base {
 
     static constexpr std::size_t DEFAULT_ALIGNMENT{alignof(std::max_align_t)};
 
@@ -110,6 +111,9 @@ namespace actor_zeta { namespace base {
         auto address = actor_tmp->address();
         add_actor_impl(std::move(actor_tmp));
         link(*this, address);
+        if(this != current_message()->sender().get()){
+            link(current_message()->sender(),address);
+        }
     }
 
     auto supervisor_abstract::spawn_supervisor(default_spawn_supervisor& construct) -> void {
@@ -129,4 +133,5 @@ namespace actor_zeta { namespace base {
     auto supervisor_abstract::address() noexcept -> address_t {
         return address_t(this);
     }
-}} // namespace actor_zeta::base
+}
+} // namespace actor_zeta::base
